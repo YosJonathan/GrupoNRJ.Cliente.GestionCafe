@@ -1,0 +1,154 @@
+﻿@using GrupoNRJ.Modelos.GestionCafe.Respuestas
+@{
+    Layout = "_Layout";
+    List<ProductoRespuesta> listadoProductos = (List<ProductoRespuesta>)this.ViewData["listadoProductos"] ?? new List<ProductoRespuesta>();
+    List<ObtenerAlertasRespuesta> alertas = (List<ObtenerAlertasRespuesta>)this.ViewData["alertas"] ?? new List<ObtenerAlertasRespuesta>();
+    List<GranosRespuesta> catalogoGranos = (List<GranosRespuesta>)this.ViewData["catalogoGrano"] ?? new List<GranosRespuesta>();
+}
+@Html.AntiForgeryToken()
+
+<!-- Título + Botón en la misma línea -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Inventario de café</h2>
+
+    <!-- Contenedor para los botones a la derecha -->
+    <div class="d-flex gap-2">
+        <!-- Botón Agregar -->
+        <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+            <i class="bi bi-plus-lg"></i> Agregar
+        </button>
+
+        <!-- Botón de Alertas -->
+        <div class="dropdown">
+            <button class="btn btn-outline-warning dropdown-toggle" type="button" id="btnAlertas" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-bell"></i> Alertas
+                <span class="badge bg-warning ">@alertas.Count</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="btnAlertas" style="min-width: 300px;">
+                @if (alertas.Count>0)
+                {
+                    foreach (ObtenerAlertasRespuesta item in alertas) {
+                        <li>
+                            <a class="dropdown-item d-flex justify-content-between align-items-start" href="#">
+                                <div>
+                                    <strong>@item.NombreProducto</strong><br>
+                                    <small class="text-muted">Min: (@item.CantidadMinima) - Existencias: (@item.Existencias)</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">Nuevo</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                    }
+                }
+                else
+                {
+                    <li>
+                        <a class="dropdown-item d-flex justify-content-between align-items-start" href="#">
+                            <div>
+                                <strong>No hay alertas.</strong><br>
+                                <small class="text-muted">Por el momento todo bien. :3</small>
+                            </div>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<hr/>
+<table id="tablaUsuarios" class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo de Grano</th>
+            <th>Cantidad</th>
+            <th style="width: 120px;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (ProductoRespuesta item in listadoProductos)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Grano</td>
+                <td>@item.Cantidad</td>
+                <td class="d-flex gap-2">
+                    <!-- Botón de editar -->
+                    <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <!-- Botón de eliminar -->
+                    <button type="button" attr-valor="@item.IdProducto" class="eliminarProducto btn btn-sm btn-outline-danger flex-fill" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Encabezado -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAgregarLabel">Agregar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo con formulario -->
+            <div class="modal-body">
+                <form id="formAgregar">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" id="nombre" class="form-control" placeholder="Escribe el nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidad" class="form-label">Cantidad</label>
+                        <input type="number" id="cantidad" class="form-control" placeholder="ingrese la cantidad" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="valorminimo" class="form-label">
+                            Valor Minimo <span class="badge rounded-circle bg-info"
+                            style="width: 20px; height: 20px; cursor: pointer;"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="right"
+                            title="Este valor minimo genera una alerta al tener menos producto">
+                                ?
+                            </span>
+                        </label>
+                        <input type="number" id="valorminimo" class="form-control" placeholder="ingrese el valor minimo" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="granosCreacion" class="form-label">Grano: </label>
+                        <select id="granosCreacion" class="form-control" required>
+                            @foreach (GranosRespuesta item in catalogoGranos)
+                            {
+                                <option value="@item.IdGranos">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer con botones -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnGuardar">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var urlAgregarProducto = '@Url.Action("AgregarProducto")';
+    var urlEliminarProducto = '@Url.Action("EliminarProducto")';
+</script>
+<script src="~/js/ManejoInventario.js"></script>
