@@ -195,4 +195,117 @@
             });
         }
     });
+    $('.movimientosProducto').click(function () {
+        var idMovimiento = $(this).attr('attr-valor');
+        llenarTablaMovimientos(idMovimiento);
+    });
+
+    $('#btnGuardarMovimiento').click(function () {
+        var movimiento = $(this).attr("attr-valor");
+        var cantidad = $('#movimientoProducto').val();
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: urlAgregarMovimientoProducto,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                IdProducto: movimiento,
+                Cantidad:cantidad,
+            }),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (data) {
+                if (data.todoCorrecto) {
+                    Swal.fire({
+                        title: data.todoCorrecto ? "Registro Ingresado Exitosamente!" : "Opps!",
+                        icon: data.todoCorrecto ? "success" : "error",
+                        text: data.mensaje
+                    }).then(() => {
+                        llenarTablaMovimientos(movimiento);
+                    });
+
+                } else {
+                    Swal.fire({
+                        title: "Opps!",
+                        icon: "error",
+                        text: "Ocurrio un error intentalo nuevamente"
+                    });
+                }
+            },
+            error: function (err) {
+                Swal.fire({
+                    title: "Opps!",
+                    icon: "error",
+                    text: "Ocurrio un error intentalo nuevamente"
+                });
+            }
+        });
+    });
+
+    function llenarTablaMovimientos(idMovimiento) {
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: urlObtenerMovProducto,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                IdProducto: idMovimiento,
+            }),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (data) {
+                if (data.todoCorrecto) {
+                    $('#btnGuardarMovimiento').attr('attr-valor', idMovimiento);
+                    var modal = new bootstrap.Modal(document.getElementById("modalMovimientos"));
+                    modal.show();
+
+                    // 🔑 destruir si ya existe un DataTable
+                    if ($.fn.DataTable.isDataTable('#tablaMovimientos')) {
+                        $('#tablaMovimientos').DataTable().destroy();
+                    }
+
+                    // limpiar tbody
+                    let tbody = $("#tablaMovimientos tbody");
+                    tbody.empty();
+
+                    // llenar manualmente las filas
+                    $.each(data.registros, function (i, item) {
+                        let fila = `
+                <tr>
+                    <td>${item.idProducto}</td>
+                    <td>${item.nombreProducto}</td>
+                    <td>${item.tipoMovimiento}</td>
+                    <td>${item.cantidad}</td>
+                    <td>${item.fechaMovimiento}</td>
+                </tr>
+            `;
+                        tbody.append(fila);
+                    });
+
+                    // volver a inicializar el DataTable
+                    $('#tablaMovimientos').DataTable({
+                        language: {
+                            url: "//cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json"
+                        }
+                    });
+
+                } else {
+                    Swal.fire({
+                        title: "Opps!",
+                        icon: "error",
+                        text: "Ocurrió un error, inténtalo nuevamente"
+                    });
+                }
+            },
+            error: function (err) {
+                Swal.fire({
+                    title: "Opps!",
+                    icon: "error",
+                    text: "Ocurrio un error intentalo nuevamente"
+                });
+            }
+        });
+    }
 });

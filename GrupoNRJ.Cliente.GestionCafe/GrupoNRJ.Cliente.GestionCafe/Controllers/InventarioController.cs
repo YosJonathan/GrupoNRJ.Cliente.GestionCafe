@@ -140,5 +140,68 @@ namespace GrupoNRJ.Cliente.GestionCafe.Controllers
 
             return Json(mensaje);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ObtenerMovProducto([FromBody] ConsultarMovimientosProductoSolicitud solicitud)
+        {
+            // Aquí llamamos a un procedimiento almacenado
+            var mensaje = new { todoCorrecto = false, registros = new List<ConsultarMovimientosProductoRespuesta>() };
+            try
+            {
+
+                var respuestaProducto = await _clienteApi.PostAsync<ConsultarMovimientosProductoSolicitud, RespuestaBase<List<ConsultarMovimientosProductoRespuesta>>>("Inventario/ConsultarMovimientos", solicitud);
+                if (respuestaProducto != null && respuestaProducto?.Codigo == 0)
+                {
+                    mensaje = new { todoCorrecto = true, registros = respuestaProducto.Datos };
+                }
+            }
+            catch (Exception)
+            {
+                mensaje = new { todoCorrecto = false, registros = new List<ConsultarMovimientosProductoRespuesta>() };
+            }
+
+
+            return Json(mensaje);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AgregarMovProducto([FromBody] AgregarMovimientoSolicitud solicitud)
+        {
+            //Si es menor a 0 hace salida, sino es ingreso
+            solicitud.TipoMovimiento = solicitud.Cantidad < 0 ? 2 : 1;
+            solicitud.Cantidad = solicitud.Cantidad < 0 ? (solicitud.Cantidad * -1) : solicitud.Cantidad;
+            // Aquí llamamos a un procedimiento almacenado
+            var mensaje = new { todoCorrecto = false, mensaje = string.Empty };
+            try
+            {
+                var respuestaProducto = await _clienteApi.PostAsync<AgregarMovimientoSolicitud, AgregarMovimientoRespuesta>("Inventario/IngresarMovimiento", solicitud);
+                if (respuestaProducto != null)
+                {
+                    switch (respuestaProducto?.Codigo)
+                    {
+                        case 1:
+
+                            mensaje = new { todoCorrecto = true, mensaje = respuestaProducto?.Mensaje };
+                            break;
+                        case 2:
+
+                            mensaje = new { todoCorrecto = true, mensaje = respuestaProducto?.Mensaje };
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                mensaje = new { todoCorrecto = false, mensaje = string.Empty};
+            }
+
+
+            return Json(mensaje);
+        }
     }
 }
