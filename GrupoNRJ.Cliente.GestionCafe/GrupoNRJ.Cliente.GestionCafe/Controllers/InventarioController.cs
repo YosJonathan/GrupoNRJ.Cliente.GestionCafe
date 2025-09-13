@@ -85,5 +85,60 @@ namespace GrupoNRJ.Cliente.GestionCafe.Controllers
 
             return Json(mensaje);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ObtenerInfoProducto([FromBody] ObtenerInfoProductoSolicitud solicitud)
+        {
+            // Aquí llamamos a un procedimiento almacenado
+            var mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0 };
+            try
+            {
+
+                var respuestaProducto = await _clienteApi.PostAsync<ObtenerInfoProductoSolicitud, RespuestaBase<ObtenerInfoProductoRespuesta>>("Inventario/ObtenerInfoProducto", solicitud);
+                if (respuestaProducto != null)
+                {
+                    if (respuestaProducto.Codigo == 0)
+                    {
+                        mensaje = new { todoCorrecto = true, idp = respuestaProducto.Datos.IdProducto, grano = respuestaProducto.Datos.GranoId, nombre = respuestaProducto.Datos.Nombre, cantidad = respuestaProducto.Datos.ValorMinimo };
+                    }
+                    else
+                    {
+                        mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0 };
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0 };
+            }
+
+
+            return Json(mensaje);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ModificarProducto([FromBody] ModificarProductoSolicitud solicitud)
+        {
+            // Aquí llamamos a un procedimiento almacenado
+            var mensaje = new { todoCorrecto = false };
+            try
+            {
+
+                var respuestaProducto = await _clienteApi.PostAsync<ModificarProductoSolicitud, ModificarProductoRespuesta>("Inventario/ModificarProducto", solicitud);
+                if (respuestaProducto != null)
+                {
+                    mensaje = new { todoCorrecto = respuestaProducto.RegistroModificadoExitosamente };
+                }
+            }
+            catch (Exception)
+            {
+                mensaje = new { todoCorrecto = false };
+            }
+
+
+            return Json(mensaje);
+        }
     }
 }

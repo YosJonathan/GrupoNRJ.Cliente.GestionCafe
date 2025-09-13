@@ -25,9 +25,10 @@
                 <span class="badge bg-warning ">@alertas.Count</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="btnAlertas" style="min-width: 300px;">
-                @if (alertas.Count>0)
+                @if (alertas.Count > 0)
                 {
-                    foreach (ObtenerAlertasRespuesta item in alertas) {
+                    foreach (ObtenerAlertasRespuesta item in alertas)
+                    {
                         <li>
                             <a class="dropdown-item d-flex justify-content-between align-items-start" href="#">
                                 <div>
@@ -37,7 +38,10 @@
                                 <span class="badge bg-primary rounded-pill">Nuevo</span>
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        @if (alertas.Count > 1)
+                        {
+                            <li><hr class="dropdown-divider"></li>
+                        }
                     }
                 }
                 else
@@ -50,14 +54,13 @@
                             </div>
                         </a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
                 }
             </ul>
         </div>
     </div>
 </div>
 
-<hr/>
+<hr />
 <table id="tablaUsuarios" class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
@@ -76,8 +79,13 @@
                 <td>@item.Cantidad</td>
                 <td class="d-flex gap-2">
                     <!-- Botón de editar -->
-                    <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" title="Editar">
+                    <button type="button" attr-valor="@item.IdProducto" class="modificarProducto btn btn-sm btn-outline-secondary flex-fill" title="Editar">
                         <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <!-- Botón de movimientos -->
+                    <button type="button" attr-valor="@item.IdProducto" class="movimientosProducto btn btn-sm btn-outline-info flex-fill" title="Eliminar">
+                        <i class="bi bi-arrow-left-right"></i>
                     </button>
 
                     <!-- Botón de eliminar -->
@@ -91,7 +99,7 @@
 </table>
 
 
-<!-- Modal Bootstrap -->
+<!-- Modal Agregar -->
 <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -116,10 +124,10 @@
                     <div class="mb-3">
                         <label for="valorminimo" class="form-label">
                             Valor Minimo <span class="badge rounded-circle bg-info"
-                            style="width: 20px; height: 20px; cursor: pointer;"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="right"
-                            title="Este valor minimo genera una alerta al tener menos producto">
+                                               style="width: 20px; height: 20px; cursor: pointer;"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="right"
+                                               title="Este valor minimo genera una alerta al tener menos producto">
                                 ?
                             </span>
                         </label>
@@ -147,8 +155,62 @@
     </div>
 </div>
 
+<!-- Modal Modificar -->
+<div class="modal fade" id="modalModificar" tabindex="-1" aria-labelledby="modalModificarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Encabezado -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalModificarLabel">Modificar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo con formulario -->
+            <div class="modal-body">
+                <form id="formModificar">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" id="nombreModificar" class="form-control" placeholder="Escribe el nombre" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="valorminimo" class="form-label">
+                            Valor Minimo <span class="badge rounded-circle bg-info"
+                                               style="width: 20px; height: 20px; cursor: pointer;"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="right"
+                                               title="Este valor minimo genera una alerta al tener menos producto">
+                                ?
+                            </span>
+                        </label>
+                        <input type="number" id="valorminimoModificar" class="form-control" placeholder="ingrese el valor minimo" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="granosCreacion" class="form-label">Grano: </label>
+                        <select id="granosModificar" class="form-control" required>
+                            @foreach (GranosRespuesta item in catalogoGranos)
+                            {
+                                <option value="@item.IdGranos">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer con botones -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnModificar">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     var urlAgregarProducto = '@Url.Action("AgregarProducto")';
     var urlEliminarProducto = '@Url.Action("EliminarProducto")';
+    var urlModificarProducto = '@Url.Action("ModificarProducto")';
+    var urlObtenerInfoProducto = '@Url.Action("ObtenerInfoProducto")';
 </script>
 <script src="~/js/ManejoInventario.js"></script>

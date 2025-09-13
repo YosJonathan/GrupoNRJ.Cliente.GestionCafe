@@ -53,7 +53,7 @@
                         text: "Ocurrio un error intentalo nuevamente"
                     });
                 }
-            });            
+            });
         }
         else {
             Swal.fire({
@@ -93,5 +93,106 @@
                 });
             }
         });
+    });
+
+    $(".modificarProducto").click(function () {
+        var id = $(this).attr("attr-valor");
+        const token = $('input[name="__RequestVerificationToken"]').val();
+
+        $.ajax({
+            url: urlObtenerInfoProducto,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                IdProducto: id
+            }),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (data) {
+                $('#nombreModificar').val(data.nombre);
+                $('#valorminimoModificar').val(data.cantidad);
+                $('#granosModificar').val(data.grano);
+                $('#btnModificar').attr('attr-modificar', data.idp);
+                var modal = new bootstrap.Modal(document.getElementById("modalModificar"));
+                modal.show();
+            },
+            error: function (err) {
+                Swal.fire({
+                    title: "Opps!",
+                    icon: "error",
+                    text: "Ocurrio un error intentalo nuevamente"
+                });
+            }
+        });
+
+    });
+    $("#btnModificar").click(function () {
+        let campos = document.querySelectorAll('#formModificar input, #formModificar select');
+        let todosLlenos = true;
+
+        campos.forEach(function (campo) {
+            if (campo.value.trim() === '') {
+                todosLlenos = false;
+                campo.style.border = '1px solid red'; // resalta campos vacíos
+            } else {
+                campo.style.border = ''; // quita el borde si está lleno
+            }
+        });
+        if (todosLlenos) {
+
+
+            var id = $("#btnModificar").attr("attr-modificar");
+            const token = $('input[name="__RequestVerificationToken"]').val();
+            var nombre = $('#nombreModificar').val();
+            var valorMinimo = $('#valorminimoModificar').val();
+            var granos = $('#granosModificar').val();
+
+
+            $.ajax({
+                url: urlModificarProducto,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    IdProducto: id,
+                    Nombre: nombre,
+                    GranoId: granos,
+                    ValorMinimo: valorMinimo
+                }),
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                success: function (data) {
+                    if (data.todoCorrecto) {
+                        Swal.fire({
+                            title: data.todoCorrecto ? "Registro Ingresado Exitosamente!" : "Opps!",
+                            icon: data.todoCorrecto ? "success" : "error",
+                            text: data.todoCorrecto ? "" : "Ocurrio un error intentalo nuevamente"
+                        }).then(() => {
+                            if (data.todoCorrecto) location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Opps!",
+                            icon: "error",
+                            text: "Ocurrio un error intentalo nuevamente"
+                        });
+                    }
+                },
+                error: function (err) {
+                    Swal.fire({
+                        title: "Opps!",
+                        icon: "error",
+                        text: "Ocurrio un error intentalo nuevamente"
+                    });
+                }
+            });
+        }
+        else {
+            Swal.fire({
+                title: "Debe llenar todos los campos!",
+                icon: "warning"
+            });
+        }
     });
 });
