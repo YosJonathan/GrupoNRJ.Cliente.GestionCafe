@@ -1,20 +1,24 @@
-﻿using System.Text.Json;
-using System.Text;
+﻿// <copyright file="ClienteAPI.cs" company="GrupoAnalisis">
+// Copyright (c) GrupoAnalisis. All rights reserved.
+// </copyright>
 
 namespace GrupoNRJ.Cliente.GestionCafe.Utilidades
 {
+    using System.Text;
+    using System.Text.Json;
+
     /// <summary>
     /// Clase para api de clientes.
     /// </summary>
     public class ClienteAPI
     {
-        private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _jsonOptions;
+        private readonly HttpClient httpClient;
+        private readonly JsonSerializerOptions jsonOptions;
 
         public ClienteAPI(HttpClient httpClient)
         {
-            _httpClient = httpClient;
-            _jsonOptions = new JsonSerializerOptions
+            this.httpClient = httpClient;
+            this.jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
@@ -28,9 +32,9 @@ namespace GrupoNRJ.Cliente.GestionCafe.Utilidades
         /// <returns>Instancia del modelo con los datos de la API.</returns>
         public async Task<T?> GetAsync<T>(string url)
         {
-            var response = await _httpClient.GetAsync(url);
+            var response = await this.httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>(_jsonOptions);
+            return await response.Content.ReadFromJsonAsync<T>(this.jsonOptions);
         }
 
         /// <summary>
@@ -41,15 +45,15 @@ namespace GrupoNRJ.Cliente.GestionCafe.Utilidades
         /// <param name="url">Ruta o endpoint de la API.</param>
         /// <param name="datos">Objeto con los datos a enviar.</param>
         /// <returns>Instancia del modelo con los datos devueltos por la API.</returns>
-        public async Task<TResponse?> PostAsync<TRequest, TResponse>(string url, TRequest datos)
+        public async Task<TResponse?> PostAsync<TRequest, TResponse>(string url, TRequest? datos)
         {
-            var json = JsonSerializer.Serialize(datos, _jsonOptions);
+            var json = JsonSerializer.Serialize(datos, this.jsonOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(url, content);
+            var response = await this.httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<TResponse>(_jsonOptions);
+            return await response.Content.ReadFromJsonAsync<TResponse>(this.jsonOptions);
         }
 
         /// <summary>
@@ -62,13 +66,13 @@ namespace GrupoNRJ.Cliente.GestionCafe.Utilidades
         /// <returns>Instancia del modelo con los datos actualizados devueltos por la API.</returns>
         public async Task<TResponse?> PutAsync<TRequest, TResponse>(string url, TRequest datos)
         {
-            var json = JsonSerializer.Serialize(datos, _jsonOptions);
+            var json = JsonSerializer.Serialize(datos, this.jsonOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PutAsync(url, content);
+            var response = await this.httpClient.PutAsync(url, content);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<TResponse>(_jsonOptions);
+            return await response.Content.ReadFromJsonAsync<TResponse>(this.jsonOptions);
         }
 
         /// <summary>
@@ -78,7 +82,7 @@ namespace GrupoNRJ.Cliente.GestionCafe.Utilidades
         /// <returns>True si la eliminación fue exitosa, False en caso contrario.</returns>
         public async Task<bool> DeleteAsync(string url)
         {
-            var response = await _httpClient.DeleteAsync(url);
+            var response = await this.httpClient.DeleteAsync(url);
             return response.IsSuccessStatusCode;
         }
     }

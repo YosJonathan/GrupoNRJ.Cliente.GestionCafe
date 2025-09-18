@@ -8,7 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="latte-art.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

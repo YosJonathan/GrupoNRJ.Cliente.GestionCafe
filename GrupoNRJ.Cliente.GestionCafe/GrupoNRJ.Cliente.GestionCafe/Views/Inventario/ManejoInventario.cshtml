@@ -4,6 +4,7 @@
     List<ProductoRespuesta> listadoProductos = (List<ProductoRespuesta>)this.ViewData["listadoProductos"] ?? new List<ProductoRespuesta>();
     List<ObtenerAlertasRespuesta> alertas = (List<ObtenerAlertasRespuesta>)this.ViewData["alertas"] ?? new List<ObtenerAlertasRespuesta>();
     List<GranosRespuesta> catalogoGranos = (List<GranosRespuesta>)this.ViewData["catalogoGrano"] ?? new List<GranosRespuesta>();
+    List<NivelTostadoRespuesta> catalogoTostado = (List<NivelTostadoRespuesta>)this.ViewData["catalogoTostado"] ?? new List<NivelTostadoRespuesta>();
 }
 @Html.AntiForgeryToken()
 
@@ -66,6 +67,7 @@
         <tr>
             <th>Nombre</th>
             <th>Tipo de Grano</th>
+            <th>Nivel de tostado</th>
             <th>Cantidad</th>
             <th style="width: 120px;">Acciones</th>
         </tr>
@@ -76,6 +78,7 @@
             <tr>
                 <td>@item.Nombre</td>
                 <td>@item.Grano</td>
+                <td>@item.NivelTostado</td>
                 <td>@item.Cantidad</td>
                 <td class="d-flex gap-2">
                     <!-- Botón de editar -->
@@ -143,6 +146,15 @@
                             }
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="tostadoCreacion" class="form-label">Nivel Tostado: </label>
+                        <select id="tostadoCreacion" class="form-control" required>
+                            @foreach (NivelTostadoRespuesta item in catalogoTostado)
+                            {
+                                <option value="@item.IdNivelTostado">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
                 </form>
             </div>
 
@@ -187,11 +199,21 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="granosCreacion" class="form-label">Grano: </label>
+                        <label for="granosModificar" class="form-label">Grano: </label>
                         <select id="granosModificar" class="form-control" required>
                             @foreach (GranosRespuesta item in catalogoGranos)
                             {
                                 <option value="@item.IdGranos">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tostadoModificar" class="form-label">Nivel Tostado: </label>
+                        <select id="tostadoModificar" class="form-control" required>
+                            @foreach (NivelTostadoRespuesta item in catalogoTostado)
+                            {
+                                <option value="@item.IdNivelTostado">@item.Nombre</option>
                             }
                         </select>
                     </div>
@@ -207,8 +229,7 @@
     </div>
 </div>
 
-
-<!-- Modal Modificar -->
+<!-- Modal Movimientos -->
 <div class="modal fade" id="modalMovimientos" tabindex="-1" aria-labelledby="modalMovimientosLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -220,7 +241,7 @@
 
             <!-- Cuerpo con formulario -->
             <div class="modal-body">
-                <form id="formModificar">
+                <form id="formMovimeinto">
                     <div class="mb-3">
                         <label for="nombre" class="form-label">Movimiento Producto</label>
                         <input type="number" id="movimientoProducto" class="form-control" placeholder="Ingrese el movimiento" required>
@@ -232,8 +253,6 @@
                         <table class="table table-striped table-hover" id="tablaMovimientos">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Nombre</th>
                                     <th scope="col">Tipo</th>
                                     <th scope="col">Cantidad</th>
                                     <th scope="col">Fecha</th>

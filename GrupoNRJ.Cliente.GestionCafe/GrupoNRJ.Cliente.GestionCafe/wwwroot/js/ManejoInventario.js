@@ -22,6 +22,8 @@
             var cantidad = parseFloat($("#cantidad").val()) || 0; // convierte a número
             var valorminimo = parseFloat($("#valorminimo").val()) || 0;
             var granos = parseInt($("#granosCreacion").val()) || 0;
+            var textoGranos = $("#granosCreacion option:selected").text();
+            var tostado = parseInt($("#tostadoCreacion").val()) || 0;
             const token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
@@ -32,7 +34,9 @@
                     Nombre: nombre,
                     Cantidad: cantidad,
                     IdGrano: granos,
-                    ValorMinimo: valorminimo
+                    ValorMinimo: valorminimo,
+                    NivelTostado: tostado,
+                    Grano: textoGranos,
                 }),
                 headers: {
                     'RequestVerificationToken': token
@@ -113,9 +117,11 @@
                 $('#nombreModificar').val(data.nombre);
                 $('#valorminimoModificar').val(data.cantidad);
                 $('#granosModificar').val(data.grano);
+                $('#tostadoModificar').val(data.nivel);
                 $('#btnModificar').attr('attr-modificar', data.idp);
                 var modal = new bootstrap.Modal(document.getElementById("modalModificar"));
                 modal.show();
+                console.log(data);
             },
             error: function (err) {
                 Swal.fire({
@@ -133,6 +139,7 @@
 
         campos.forEach(function (campo) {
             if (campo.value.trim() === '') {
+                alert('El campo vacío tiene id: ' + campo.id); // Muestra el id del campo vacío
                 todosLlenos = false;
                 campo.style.border = '1px solid red'; // resalta campos vacíos
             } else {
@@ -147,6 +154,7 @@
             var nombre = $('#nombreModificar').val();
             var valorMinimo = $('#valorminimoModificar').val();
             var granos = $('#granosModificar').val();
+            var tostado = $('#tostadoModificar').val();
 
 
             $.ajax({
@@ -157,7 +165,8 @@
                     IdProducto: id,
                     Nombre: nombre,
                     GranoId: granos,
-                    ValorMinimo: valorMinimo
+                    ValorMinimo: valorMinimo,
+                    NivelTostado: tostado,
                 }),
                 headers: {
                     'RequestVerificationToken': token
@@ -272,12 +281,17 @@
 
                     // llenar manualmente las filas
                     $.each(data.registros, function (i, item) {
+                        var icono = "";
+                        if (item.tipoMovimiento =="Ingreso") {
+                            icono = "<i class='bi bi-arrow-up text-success'></i>";
+                        } else if (item.tipoMovimiento =="Salida") {
+                            icono = "<i class='bi bi-arrow-down text-danger'></i>";
+                        }
+
                         let fila = `
                 <tr>
-                    <td>${item.idProducto}</td>
-                    <td>${item.nombreProducto}</td>
                     <td>${item.tipoMovimiento}</td>
-                    <td>${item.cantidad}</td>
+                    <td>${item.cantidad} ${icono}</td>
                     <td>${item.fechaMovimiento}</td>
                 </tr>
             `;
