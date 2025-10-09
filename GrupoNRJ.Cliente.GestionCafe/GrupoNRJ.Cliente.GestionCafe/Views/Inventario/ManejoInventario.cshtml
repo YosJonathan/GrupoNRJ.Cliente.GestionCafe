@@ -4,7 +4,7 @@
     List<ProductoRespuesta> listadoProductos = (List<ProductoRespuesta>)this.ViewData["listadoProductos"] ?? new List<ProductoRespuesta>();
     List<ObtenerAlertasRespuesta> alertas = (List<ObtenerAlertasRespuesta>)this.ViewData["alertas"] ?? new List<ObtenerAlertasRespuesta>();
     List<GranosRespuesta> catalogoGranos = (List<GranosRespuesta>)this.ViewData["catalogoGrano"] ?? new List<GranosRespuesta>();
-    List<NivelTostadoRespuesta> catalogoTostado = (List<NivelTostadoRespuesta>)this.ViewData["catalogoTostado"] ?? new List<NivelTostadoRespuesta>();
+    List<TipoProductoResponse> catalogoTipo = (List<TipoProductoResponse>)this.ViewData["catalogoTipoProducto"] ?? new List<TipoProductoResponse>();
 }
 @Html.AntiForgeryToken()
 
@@ -66,8 +66,8 @@
     <thead class="table-dark">
         <tr>
             <th>Nombre</th>
+            <th>Tipo Producto</th>
             <th>Tipo de Grano</th>
-            <th>Nivel de tostado</th>
             <th>Cantidad</th>
             <th style="width: 120px;">Acciones</th>
         </tr>
@@ -77,8 +77,8 @@
         {
             <tr>
                 <td>@item.Nombre</td>
+                <td>@item.TipoProducto</td>
                 <td>@item.Grano</td>
-                <td>@item.NivelTostado</td>
                 <td>@item.Cantidad</td>
                 <td class="d-flex gap-2">
                     <!-- Botón de editar -->
@@ -136,22 +136,23 @@
                         </label>
                         <input type="number" id="valorminimo" class="form-control" placeholder="ingrese el valor minimo" required>
                     </div>
-
                     <div class="mb-3">
-                        <label for="granosCreacion" class="form-label">Grano: </label>
-                        <select id="granosCreacion" class="form-control" required>
-                            @foreach (GranosRespuesta item in catalogoGranos)
+                        <label for="tipoProductoCreacion" class="form-label">Tipo Producto: </label>
+                        <select id="tipoProductoCreacion" class="form-control" required>
+                            @foreach (TipoProductoResponse item in catalogoTipo)
                             {
-                                <option value="@item.IdGranos">@item.Nombre</option>
+                                <option class="tipoProductoCreacion" value="@item.IdTipoProducto">@item.Nombre</option>
                             }
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="tostadoCreacion" class="form-label">Nivel Tostado: </label>
-                        <select id="tostadoCreacion" class="form-control" required>
-                            @foreach (NivelTostadoRespuesta item in catalogoTostado)
+
+                    <div class="mb-3" id="contenedorGranoCreacion">
+                        <label for="granosCreacion" class="form-label">Grano: </label>
+                        <select id="granosCreacion" class="form-control" required>
+                            <option value="0"></option>
+                            @foreach (GranosRespuesta item in catalogoGranos)
                             {
-                                <option value="@item.IdNivelTostado">@item.Nombre</option>
+                                <option value="@item.IdGranos">@item.Nombre</option>
                             }
                         </select>
                     </div>
@@ -204,16 +205,6 @@
                             @foreach (GranosRespuesta item in catalogoGranos)
                             {
                                 <option value="@item.IdGranos">@item.Nombre</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="tostadoModificar" class="form-label">Nivel Tostado: </label>
-                        <select id="tostadoModificar" class="form-control" required>
-                            @foreach (NivelTostadoRespuesta item in catalogoTostado)
-                            {
-                                <option value="@item.IdNivelTostado">@item.Nombre</option>
                             }
                         </select>
                     </div>

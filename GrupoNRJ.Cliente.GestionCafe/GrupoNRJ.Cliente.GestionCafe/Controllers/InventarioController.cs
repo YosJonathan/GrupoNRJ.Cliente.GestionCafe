@@ -32,8 +32,8 @@ namespace GrupoNRJ.Cliente.GestionCafe.Controllers
                 this.ViewData["alertas"] = alertas?.Datos ?? new List<ObtenerAlertasRespuesta>();
                 var catalogoGranos = await this.clienteApi.PostAsync<object, RespuestaBase<List<GranosRespuesta>>>("Catalogo/obtenerGranos", null);
                 this.ViewData["catalogoGrano"] = catalogoGranos?.Datos ?? new List<GranosRespuesta>();
-                var catalogoTostado = await this.clienteApi.PostAsync<object, RespuestaBase<List<NivelTostadoRespuesta>>>("Catalogo/obtenerNivelTostado", null);
-                this.ViewData["catalogoTostado"] = catalogoTostado?.Datos ?? new List<NivelTostadoRespuesta>();
+                var catalogoTipoProducto = await this.clienteApi.PostAsync<object, RespuestaBase<List<TipoProductoResponse>>>("Catalogo/obtenerTipoProducto", null);
+                this.ViewData["catalogoTipoProducto"] = catalogoTipoProducto?.Datos ?? new();
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace GrupoNRJ.Cliente.GestionCafe.Controllers
         public async Task<IActionResult> ObtenerInfoProducto([FromBody] ObtenerInfoProductoSolicitud solicitud)
         {
             // Aquí llamamos a un procedimiento almacenado
-            var mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0, nivel = 0 };
+            var mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0};
             try
             {
                 var respuestaProducto = await this.clienteApi.PostAsync<ObtenerInfoProductoSolicitud, RespuestaBase<ObtenerInfoProductoRespuesta>>("Inventario/ObtenerInfoProducto", solicitud);
@@ -100,17 +100,17 @@ namespace GrupoNRJ.Cliente.GestionCafe.Controllers
                 {
                     if (respuestaProducto.Codigo == 0)
                     {
-                        mensaje = new { todoCorrecto = true, idp = respuestaProducto.Datos.IdProducto, grano = respuestaProducto.Datos.GranoId, nombre = respuestaProducto.Datos.Nombre, cantidad = respuestaProducto.Datos.ValorMinimo, nivel = respuestaProducto.Datos.NivelTostado };
+                        mensaje = new { todoCorrecto = true, idp = respuestaProducto.Datos.IdProducto, grano = respuestaProducto.Datos.GranoId, nombre = respuestaProducto.Datos.Nombre, cantidad = respuestaProducto.Datos.ValorMinimo};
                     }
                     else
                     {
-                        mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0, nivel = 0 };
+                        mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0};
                     }
                 }
             }
             catch (Exception)
             {
-                mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0,nivel = 0 };
+                mensaje = new { todoCorrecto = false, idp = 0, grano = 0, nombre = string.Empty, cantidad = 0.0 };
             }
 
             return this.Json(mensaje);

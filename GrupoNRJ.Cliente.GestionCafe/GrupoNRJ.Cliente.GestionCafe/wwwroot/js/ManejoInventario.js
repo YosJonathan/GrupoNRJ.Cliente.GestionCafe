@@ -4,6 +4,7 @@
             url: "//cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json"
         }
     });
+
     $("#btnGuardar").click(function () {
         let campos = document.querySelectorAll('#formAgregar input, #formAgregar select');
         let todosLlenos = true;
@@ -23,7 +24,8 @@
             var valorminimo = parseFloat($("#valorminimo").val()) || 0;
             var granos = parseInt($("#granosCreacion").val()) || 0;
             var textoGranos = $("#granosCreacion option:selected").text();
-            var tostado = parseInt($("#tostadoCreacion").val()) || 0;
+            var tipoProducto = parseInt($("#tipoProductoCreacion").val()) || 0;
+
             const token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
@@ -35,7 +37,7 @@
                     Cantidad: cantidad,
                     IdGrano: granos,
                     ValorMinimo: valorminimo,
-                    NivelTostado: tostado,
+                    TipoProducto: tipoProducto,
                     Grano: textoGranos,
                 }),
                 headers: {
@@ -154,7 +156,6 @@
             var nombre = $('#nombreModificar').val();
             var valorMinimo = $('#valorminimoModificar').val();
             var granos = $('#granosModificar').val();
-            var tostado = $('#tostadoModificar').val();
 
 
             $.ajax({
@@ -166,7 +167,6 @@
                     Nombre: nombre,
                     GranoId: granos,
                     ValorMinimo: valorMinimo,
-                    NivelTostado: tostado,
                 }),
                 headers: {
                     'RequestVerificationToken': token
@@ -219,7 +219,7 @@
             contentType: 'application/json',
             data: JSON.stringify({
                 IdProducto: movimiento,
-                Cantidad:cantidad,
+                Cantidad: cantidad,
             }),
             headers: {
                 'RequestVerificationToken': token
@@ -252,6 +252,7 @@
         });
     });
 
+
     function llenarTablaMovimientos(idMovimiento) {
         const token = $('input[name="__RequestVerificationToken"]').val();
         $.ajax({
@@ -282,9 +283,9 @@
                     // llenar manualmente las filas
                     $.each(data.registros, function (i, item) {
                         var icono = "";
-                        if (item.tipoMovimiento =="Ingreso") {
+                        if (item.tipoMovimiento == "Ingreso") {
                             icono = "<i class='bi bi-arrow-up text-success'></i>";
-                        } else if (item.tipoMovimiento =="Salida") {
+                        } else if (item.tipoMovimiento == "Salida") {
                             icono = "<i class='bi bi-arrow-down text-danger'></i>";
                         }
 

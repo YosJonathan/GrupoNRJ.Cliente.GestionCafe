@@ -1,0 +1,109 @@
+﻿@using GrupoNRJ.Modelos.GestionCafe.Respuestas
+@{
+    Layout = "_Layout";
+    ListadoCatalogoProductosRespuesta listadoProductos = (ListadoCatalogoProductosRespuesta)this.ViewData["listadoProductos"] ?? new();
+    List<CombosResponse> listadoCombos = (List<CombosResponse>)this.ViewData["listadoCombos"] ?? new();
+}
+
+@Html.AntiForgeryToken()
+
+<!-- Título + Botón en la misma línea -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Inventario de café</h2>
+
+    <!-- Contenedor para los botones a la derecha -->
+    <div class="d-flex gap-2">
+        <!-- Botón Agregar -->
+        <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+            <i class="bi bi-plus-lg"></i> Agregar
+        </button>        
+    </div>
+</div>
+
+<table id="tablaUsuarios" class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Productos</th>
+            <th style="width: 40px;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (CombosResponse item in listadoCombos)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Descripcion</td>
+                <td class="d-flex gap-2">
+
+                    <!-- Botón de eliminar -->
+                    <button type="button" attr-valor="@item.IdCodigoCombo" class="eliminarProducto btn btn-sm btn-outline-danger flex-fill" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal Agregar -->
+<div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Encabezado -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAgregarLabel">Agregar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo con formulario -->
+            <div class="modal-body">
+                <form id="formAgregar">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" maxlength="100" id="nombre" class="form-control" placeholder="Escribe el nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cafeCreacion" class="form-label">Cafe: </label>
+                        <select id="cafeCreacion" class="form-control" required>
+                            @foreach (CatalogoProductoResponse item in listadoProductos.Cafe)
+                            {
+                                <option value="@item.Codigo">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="contenedorGranoCreacion">
+                        <label for="tasaCreacion" class="form-label">Tasa: </label>
+                        <select id="tasaCreacion" class="form-control" required>
+                            @foreach (CatalogoProductoResponse item in listadoProductos.Tasa)
+                            {
+                                <option value="@item.Codigo">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3" id="contenedorGranoCreacion">
+                        <label for="filtroCreacion" class="form-label">Filtro: </label>
+                        <select id="filtroCreacion" class="form-control" required>
+                            @foreach (CatalogoProductoResponse item in listadoProductos.Filtros)
+                            {
+                                <option value="@item.Codigo">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer con botones -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnGuardar">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var urlAgregarCombo = '@Url.Action("AgregarCombo")';
+    var urlEliminarCombo = '@Url.Action("EliminarCombo")';
+</script>
+<script src="~/js/GestionCombos.js"></script>
