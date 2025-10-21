@@ -1,0 +1,169 @@
+﻿@using GrupoNRJ.Modelos.GestionCafe.Respuestas
+@using Newtonsoft.Json
+
+@{
+    Layout = "_Layout";
+    GeneracionReportesRespuesta listadoProductos = (GeneracionReportesRespuesta)this.ViewData["Reportes"] ?? new();
+    string mensajeError = this.ViewData["mensajeError"] as string ?? string.Empty;
+    var jsonData = JsonConvert.SerializeObject(listadoProductos);
+}
+
+@if (string.IsNullOrEmpty(mensajeError))
+{
+    <div class="container my-4">
+        <h3 class="text-center mb-4">Reportes del Sistema</h3>
+
+        <div class="row g-4">
+            <!-- Gráfica 1: Reportes por Área -->
+            <div class="col-md-6">
+                <div class="card shadow-sm p-3">
+                    <h5 class="card-title text-center">Reportes por Área</h5>
+                    <canvas id="chartAreas" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfica 2: Lotes por Situación -->
+            <div class="col-md-6">
+                <div class="card shadow-sm p-3">
+                    <h5 class="card-title text-center">Situación de los Lotes</h5>
+                    <canvas id="chartLotes" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // --- Recibimos los datos desde el backend (.NET)
+        const datos = @Html.Raw(jsonData);
+
+        const reportesPorAreas = datos.ReportesPorAreas || [];
+        const reportesPorLotes = datos.ReportesPorLotes || [];
+
+        // --- FUNCIONES AUXILIARES ---
+        function generarColoresAleatorios(cantidad) {
+            const colores = [];
+            for (let i = 0; i < cantidad; i++) {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                colores.push(`rgba(${r}, ${g}, ${b}, 0.7)`);
+            }
+            return colores;
+        }
+
+        // --- GRÁFICA 1: Reportes por Área ---
+        const areaCounts = {};
+        reportesPorAreas.forEach(r => {
+            areaCounts[r.Area] = (areaCounts[r.Area] || 0) + 1;
+        });
+
+        const areaLabels = Object.keys(areaCounts);
+        const areaValues = Object.values(areaCounts);
+        const areaColors = generarColoresAleatorios(areaLabels.length);
+
+        new Chart(document.getElementById('chartAreas'), {
+            type: 'bar',
+            data: {
+                labels: areaLabels,
+                datasets: [{
+                    label: 'Cantidad de reportes',
+                    data: areaValues,
+                    backgroundColor: areaColors,
+                    borderColor: areaColors.map(c => c.replace('0.7', '1')),
+                    borderWidth: 2,
+                    borderRadius: 10,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Reportes agrupados por Área',
+                        color: '#fff',
+                        font: { size: 18, weight: 'bold' }
+                    },
+                    tooltip: {
+                        backgroundColor: '#000',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        cornerRadius: 6
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#ccc', font: { size: 13 } },
+                        grid: { color: '#333' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#ccc', stepSize: 1 },
+                        grid: { color: '#444' }
+                    }
+                }
+            }
+        });
+
+        // --- GRÁFICA 2: Lotes por Situación ---
+        const situacionCounts = {};
+        reportesPorLotes.forEach(l => {
+            situacionCounts[l.Situacion] = (situacionCounts[l.Situacion] || 0) + 1;
+        });
+
+        const situacionLabels = Object.keys(situacionCounts);
+        const situacionValues = Object.values(situacionCounts);
+        const situacionColors = generarColoresAleatorios(situacionLabels.length);
+
+        new Chart(document.getElementById('chartLotes'), {
+            type: 'bar',
+            data: {
+                labels: situacionLabels,
+                datasets: [{
+                    label: 'Cantidad de lotes',
+                    data: situacionValues,
+                    backgroundColor: situacionColors,
+                    borderColor: situacionColors.map(c => c.replace('0.7', '1')),
+                    borderWidth: 2,
+                    borderRadius: 10,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Situación actual de los Lotes',
+                        color: '#fff',
+                        font: { size: 18, weight: 'bold' }
+                    },
+                    tooltip: {
+                        backgroundColor: '#000',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        cornerRadius: 6
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#ccc', font: { size: 13 } },
+                        grid: { color: '#333' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#ccc', stepSize: 1 },
+                        grid: { color: '#444' }
+                    }
+                }
+            }
+        });
+    </script>
+}
+}
+else
+{
+    <h2>@mensajeError</h2>
+}

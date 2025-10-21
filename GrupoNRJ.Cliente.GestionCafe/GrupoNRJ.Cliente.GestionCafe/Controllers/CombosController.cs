@@ -26,7 +26,6 @@ namespace GrupoNRJ.Cliente.GestionCafe.Controllers
         {
             try
             {
-
                 var listadoProductos = await this.clienteApi.PostAsync<object, RespuestaBase<ListadoCatalogoProductosRespuesta>>("Catalogo/obtenerCatalogoCombo", null);
                 this.ViewData["listadoProductos"] = listadoProductos?.Datos ?? new();
                 var listadoCombos = await this.clienteApi.PostAsync<object, RespuestaBase<List<CombosResponse>>>("Combo/ListaCombos", null);
@@ -61,7 +60,6 @@ namespace GrupoNRJ.Cliente.GestionCafe.Controllers
 
             return this.Json(mensaje);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
