@@ -1,5 +1,10 @@
 ﻿$(document).ready(function () {
-
+    $('#tablaCombos').DataTable({
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json"
+        },
+        pageLength: 5
+    });
     $("#btnGuardar").click(function () {
         let campos = document.querySelectorAll('#formAgregar input, #formAgregar select');
         let todosLlenos = true;
