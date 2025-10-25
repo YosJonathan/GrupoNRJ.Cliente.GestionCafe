@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -20,17 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GrupoNRJ.Modelos.GestionCafe" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="GrupoNRJ.Modelos.GestionCafe">
-      <HintPath>..\..\..\GrupoNRJ.Modelos.GestionCafe\GrupoNRJ.Modelos.GestionCafe\bin\Debug\net8.0\GrupoNRJ.Modelos.GestionCafe.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

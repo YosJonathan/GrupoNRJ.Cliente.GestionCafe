@@ -4,10 +4,10 @@
 
 namespace GrupoNRJ.Cliente.GestionCafe.Utilidades
 {
-    using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
     using System.Net.Http.Headers;
     using System.Text;
     using System.Text.Json;
+    using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
     using static System.Net.WebRequestMethods;
 
     /// <summary>
@@ -19,7 +19,9 @@ namespace GrupoNRJ.Cliente.GestionCafe.Utilidades
         private readonly JsonSerializerOptions jsonOptions;
         private string token;
 
+#pragma warning disable CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de agregar el modificador "required" o declararlo como un valor que acepta valores NULL.
         public ClienteAPI(HttpClient httpClient)
+#pragma warning restore CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de agregar el modificador "required" o declararlo como un valor que acepta valores NULL.
         {
             this.httpClient = httpClient;
             this.jsonOptions = new JsonSerializerOptions
